@@ -1,0 +1,825 @@
+<!doctype html>
+<html ng-app="life"><head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PFS Investments & Primerica Advisors</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-503324-5"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-503324-5');
+
+/* Google Tag Manager */
+
+    (function(w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start':
+            new Date().getTime(),
+            event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-N75H5LS');
+/* End Google Tag Manager */
+</script>
+<script src="/general/src/pol.js"></script>
+<script src="/licensing/edcourses/src/seewhy.js"></script>
+<script data-require="angular.js@*" data-semver="1.3.14" src="/licensing/src/angular.min.js"></script>
+<script data-require="angular-ui-bootstrap@0.3.0" data-semver="0.3.0" src="/licensing/src/ui-bootstrap-tpls-0.3.0.min.js"></script>
+<script src="/licensing/src/life-licensing.js"></script>
+<script src="https://kit.fontawesome.com/aa6376d191.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="/licensing/style_sheets/life-licensing.css" />
+<link rel="stylesheet" type="text/css" href="/general/style_sheets/assets/bootstrap-4.6.0-dist/css/bootstrap.min.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/general/style_sheets/gotham.min.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/general/style_sheets/owl.carousel.min.css">
+<link rel="stylesheet" type="text/css" href="/general/style_sheets/owl.theme.default.min.css">
+<script type="text/javascript" src="/general/src/left_nav.js"></script>
+<script type="text/javascript" src="/general/src/popup_window.js"></script>
+<script type="text/javascript" src="/pfsca/csrfjs"></script>
+<script type="text/javascript">
+function gotoFireLight(agent_id, code_type)
+{
+ var form = self.document.getElementById("firelightForm");
+
+ if (!!form)
+ {
+  form.elements['id'].value   = agent_id  || "";
+  form.elements['type'].value = code_type || "";
+  form.submit();
+  if (!!top.top_nav.SetCookie) top.top_nav.SetCookie('Firelight','Firelight',null,'/',self.document.location.hostname,false);
+ }
+}
+
+function callFireLight()
+{
+ var top_window_frame = top.top_nav || null;
+
+ if (!top_window_frame || (!top_window_frame.ownedCodes && !top_window_frame.dupCodes)) gotoFireLight();
+ else
+ {
+  var own_codes = dup_codes = [];
+
+  if (!!top_window_frame.ownedCodes) own_codes = top_window_frame.ownedCodes.split(';');
+  if (!!top_window_frame.dupCodes)   dup_codes = top_window_frame.dupCodes.split(';');
+
+  if ((own_codes.length == 1) && (dup_codes.length == 0)) gotoFireLight(own_codes[0],"O");
+  else if ((dup_codes.length == 1) && (own_codes.length == 0)) gotoFireLight(dup_codes[0],"D");
+  else
+  {
+   var div = self.document.getElementById("firelight_div");
+
+   if (!!div)
+   {
+    var html = '<div style="width:145px; height:auto; font-size:12px; max-height:200px; overflow-x:hidden; overflow-y:auto; padding-bottom:3px; z-index:2; background-color:#ffffcc; border: medium double #ff0000"><p>&nbsp; <b>Log into Firelight as:<\/b><\/p><ol>';
+
+    for (var i = 0; i < own_codes.length; i++) html += "<li><a style=\"width:70px; line-height:1.4\" href=\"javascript:gotoFireLight('" + own_codes[i] + "','O')\">" + own_codes[i] + "<\/a><\/li>";
+    for (var i = 0; i < dup_codes.length; i++) html += "<li><a style=\"width:70px; line-height:1.4\" href=\"javascript:gotoFireLight('" + dup_codes[i] + "','D')\">" + dup_codes[i] + "<\/a><\/li>";
+
+    html += '<\/ol><\/div>';
+    div.innerHTML = html;
+   }
+  }
+ }
+}
+
+function getEnvironment()
+{
+ var subdomain = self.document.location.hostname.toLowerCase();
+ if ((subdomain.indexOf('test.') == 0) || (subdomain.indexOf('drs.') == 0)) return "test";
+ if (subdomain.indexOf('dev.') == 0) return "dev";
+ return "prod";
+}
+
+// SDMR 22915
+function launchCDN(country)
+{
+ window.open("/general/pages/third_party_site_disclaimer.html?url=/pfsca/views/priEnvestnet.jsp%3FopCode=20&firmCode=primerica" + country);
+}
+function launchSAM(){window.open("/pfsca/JSPBeanBuilderServlet?page=samaccess&bean=fanslink")}
+
+// SDMR 23487
+function getRefinitivSSOURL()
+{
+ var subdomain, refer, html = "";
+
+ switch(getEnvironment())
+ {
+	case "test":
+	{
+	 subdomain = "test-";
+	 refer = "poltest_investmentviewplus_1/0oa7iinudlGuptz6r1d7/aln7iiucduSyVmVFW1d7";
+	 break;
+	}
+	default:
+	{
+	 subdomain = "";
+	 refer = "primericaonline_refinitiv_1/0oa5oz2v2q9xrhHJt697/aln5oz5xdoB80mpm3697";
+	}
+ }
+
+ html = '<a target="_blank" href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2F' + subdomain + 'login.primericaonline.com/home/' + refer + '"><img src="../graphics/refinitiv_logo_150x68.jpg" width="150" height="68" vspace="3" border="0" alt="Refinitiv logo"></a><br>';
+ return html;
+}
+</script>
+<script>
+  var environment = "prod"; // default
+  var subdomain = document.location.hostname.toLowerCase();
+  if ((subdomain.indexOf('test.') == 0) || (subdomain.indexOf('drs.')  == 0)) environment = "test";
+  else if (subdomain.indexOf('dev.') == 0) environment = "dev";
+</script>
+
+</head>
+<body ng-controller="LocationCtrl">
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N75H5LS" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+<header>
+
+  <div class="row mx-3 m-0 p-2 header-blue">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+          <td width="20%"><img src="/licensing/graphics/primerica-logo.png" class="img-fluid align-middle" alt="Primerica logo"/></td>
+          <td width="80%"><strong class="align-middle text-uppercase text-white pl-3 pr-0 py-2 ml-1 border-white border-left" style="font-size:1.8vw"> PFS Investments & Primerica Advisors</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <style>
+    .owl-story {
+      max-width: 38%;
+      display: inline-flex;
+      flex-wrap: wrap;
+      padding: 0 0 0 .5em;
+    }
+    .owl-img {
+      display: inline-flex !important;
+      max-width: 60%;
+      vertical-align: top;
+    }
+    .quicklink_lists {
+      line-height: 1.6em;
+    }
+    .main_banner_ct {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .left-banner_ct {
+      margin-right: 0 !important;
+      display: flex;
+      width: 70%;
+      margin-top: .5em;
+    }
+    .qklink_container {
+      width: 25.6%;
+      vertical-align: top;
+      border-left: 1px solid lightgray;
+      padding-left: 1.4em;
+      margin-top: 0.5em;
+    }
+    .sub_items {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0;
+    }
+    .sub_menu_toggle[aria-expanded="true"]{
+      background-color: #778899 !important;
+    }
+    .sub_sub_menu_toggle[aria-expanded="true"]{
+      background-color:#7197ae !important;
+    }
+    .sub_sub_menu_toggle2[aria-expanded="true"]{
+      background-color:#86a2a0 !important;
+    }
+    .sl-grey {background-color:#778899;height:100%;width:100%;}
+    .article_btn {
+      background: #39F;
+      color: white;
+      padding: 0.4em;
+      display: block;
+      width: 100%;
+      margin-top: 1em;
+      text-align: center;
+      border: none;
+    }
+    .article_btn:hover {
+      text-decoration: underline;
+    }
+  </style>
+</header>
+<a name="content"></a>
+<main>
+  <div class="main_banner_ct">
+    <div class="mx-3 mb-3 left-banner_ct">
+      <div class="col-12 p-0 slider owl-carousel owl-theme">       
+        <article>
+          <img src="/general/graphics/am_080823_passFast.jpg" alt="Up to the Minute with PFSI Banner image"/>
+        </article>   
+
+        <article>
+          <img src="/general/graphics/uttm_08-09-23.jpg" alt="Up to the Minute with PFSI Banner image" class="owl-img"/>
+          <div class="owl-story">
+            <h5>
+              <strong>The Next “Up to the Minute with PFSI” Broadcast Available Here, Friday, August 25</strong>
+            </h5>
+            <p>Come back here, to the Investments page on Friday, August 25, for the August edition of “Up to the Minute with PFSI”!* You’ll hear important messages on growing your investments business from top securities producers, including RVP Rod Stovall and SNSD Eddie Gonzalez, hosted by EVP Brian Weigle! This program is available to all securities licensed Reps. Don’t miss a single broadcast: text WIN to 73513 to opt in for Company text messages!</p>
+            <br/>
+            <p style="font-size: 75%;">*The Up to The Minute show is intended solely for securities licensed representatives and those who are in the process of becoming licensed (who have submitted their U4).</p>
+          </div>
+        </article>    
+
+        <article>
+          <a href="Primerica-National-Webinar-Email-Invite.pdf" target="_blank"><img src="/general/graphics/am_08-02-23_franklin-1.jpg" alt="Up to the Minute with PFSI Banner image" class="owl-img"/></a>
+          <div class="owl-story">
+            <h5>
+              <strong>Franklin Templeton / Primerica National Webinar Wednesday, August 9</strong>
+            </h5>
+            <p>Join us on Wednesday, August 9, at 12 p.m. ET to hear Ed Perks, CEO, Franklin Income Investors, and Josh Greco, Senior Institutional Portfolio Manager, Franklin Income Investors, share updates on the Franklin Income Fund and SMA. This webinar will also include a timely home office update and useful perspective from the field. We are offering the webinar live in English and Spanish. <a href="Primerica-National-Webinar-Email-Invite.pdf" target="_blank">Register here</a>.</p>
+          </div>
+        </article>
+
+        <article>
+          <img src="/general/graphics/hp_072523_50-on-friday.jpg" alt="Up to the Minute with PFSI Banner image" class="owl-img"/>
+          <div class="owl-story">
+            <h5>
+              <strong>NEW! 'Fifty on Friday' Training Series Starts Aug. 4 at 12 p.m. (Noon) ET</strong>
+            </h5>
+            <p>Join us every Friday at 12 p.m. (Noon) ET to hear from our Strategic Partners on the topics you want to learn about to grow your investment business! You’ll find the topics and Zoom link on the PFSI Calendar located at POL > Products > Investments > United States > PFSI Calendar</p>
+          </div>
+        </article>
+        
+        <article>
+          <a href="/product_support/asset/pages/lifetime-investment-program.html" target="_blank"><img src="/general/graphics/am_06-20-23_Lifetime-relaunch.jpg" alt="Up to the Minute with PFSI Banner image" class="owl-img"/></a>
+          <div class="owl-story">
+            <p>Primerica Advisors has selected BNY Mellon | Pershing to replace TD Ameritrade as custodian for all Lifetime Investment Program accounts. Please visit the <a href="/product_support/asset/pages/lifetime-investment-program.html" target="_self"><b>Lifetime Relaunch Microsite</b></a> for support, resources and information. There  you will find a list of live training events. We hope you join us live, but we will also be recording these sessions so you can view them at your convenience on POL. This page has all the resources you need to expertly navigate our transition to Pershing. We're constantly updating these resources, so check back frequently!</p>
+          </div>
+        </article>
+
+        <article>
+          <a href="/product_support/asset/pages/lifetime-investment-program.html" target="_blank"><img src="/general/graphics/am_05-26-23_Smart-Solutions.jpg" alt="Up to the Minute with PFSI Banner image" class="owl-img"/></a>
+          <div class="owl-story">
+            <h5>
+              <strong>Use the Small Business Retirement Plan Selector Tool to Find a Smart Solution</strong>
+            </h5>
+            <p>Deciding which retirement plan to choose for a small business doesn't need to be complex. Use the new Small Business Retirement Plan Selector Tool to assist in determining which retirement plan solution is a good fit for each client. Go to: <strong>POL > Products > Investments > US > Bus. Retirement Resource Center > Small Business Retirement Plan Selector Tool</strong></p><br>
+							<p><strong>For more information, read the <a href="Small-Business-Retirement-Plan-Selector-Tool.docx" target="_blank">May 25 Field Bulletin</a></strong></p><br>
+              <p><strong><a href="What-Plan-is-the-Smart-Solution-for-Small-Business.pdf" target="_blank">What Plan is the Smart Solution?</a></strong></p>
+          </div>
+        </article>
+
+        <article>
+          <img src="/general/graphics/am_03-14-23_PFISProud.jpg" alt="PFSIProud" class="owl-img"/>
+          <div class="owl-story">
+            <h5>
+              <strong>You worked hard to pass, get recognized!</strong>
+            </h5>
+            <p>Pass any of your securities license exams and let us help recognize you!</p>
+              <li>US - SIE, Series 6, Series 63, Series 26, or Series 65</li>
+              <li>Canada - Mutual Fund & Branch Manager Exam</li><br>
+            <p>Snap a picture of you with your passing score sheet and do one (or both) of the following:</p>
+              <li>Post a public picture to your Instagram or Twitter feed using #PFSIProud or #PFSLIProud OR</li>
+              <li>Text a photo to (913) 733-1467</li>
+            <p>The #PFSIProud / #PFSLProud Feed scrolls in the Securities Licensing Page on POL</p>
+          </div>
+        </article>
+
+        <article>
+          <img src="/general/graphics/am_03-23-23-Annuities_Basic_Webinar_Announcment.jpg" alt="Annuities Basic Webinar" class="owl-img"/>
+          <div class="owl-story">
+            <h5>
+              <strong>NEW! 'Simplifying Annuities' Webinar Designed to Build Confidence</strong>
+            </h5>
+            <p>Register today for an hour-long course on annuities basics designed to build your confidence in several core areas. These monthly webinars will be followed by a Q and A session. Don't miss them live! <a href="https://zoom.us/webinar/register/WN_vJK2knjpQNysqKcSH-UrTQ" target="_blank">Click here to Register.</a></p>
+          </div>
+        </article>
+
+        <article>
+          <img src="/general/graphics/am_02-27-23_SimplifyingSecurities-Promo.jpg" alt="Simplifying Securities Training Webinar" class="owl-img"/>
+          <div class="owl-story">
+            <h5>
+              <strong>NEW! 'Simplifying Securities' Training Series Now Available</strong>
+            </h5>
+            <p>Register today for this brand new 5-week training series geared to simplify securities for newly licensed securities Representatives! <a href="https://zoom.us/webinar/register/WN_xeqb2WkPTpquDwpvE6zsUQ" target="_blank">Click to register</a></p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="mx-3 mb-3 qklink_container">
+      <a href='/apps/" + environment + "/fe/pol/content/v1/#/on-demand/searchView?searchInput=Up%20To%20The%20Minute%20With%20PFSI%20-&searchKey=titleorkeywords' target='_blank'><img src='/general/graphics/up-to-the-minute_640x360.jpg' width='100%' height='auto' alt='Up To The Minute' style="margin-bottom:1em;"/></a>
+      <h5>Quick links</h5>
+      <a href="https://calendar.google.com/calendar/embed?src=us_securitiesmktg%40corp.primerica.com&ctz=America%2FNew_York" target="_blank"><span class="quicklink_lists">PFSI Calendar</span></a><br>
+      <span class="quicklink_lists"><b>Applications</b></span>
+      <li><a href="javascript:launchSAM()" onclick="boldLink(this,2)">Shareholder Account Manager</a></li>
+      <li><a href="https://www.primericaonline.com/isp/index.html" target="_blank">EZ Key</a></li>
+      <li><a href="javascript:callFireLight()" onclick="boldLink(this,2)">Annuity Pro</a></li>
+      <li><a href="https://www.primericaonline.com/pfsca/PershingSSOServlet" target="_blank">Lifetime Investment Program</a></li>
+      <li><a href="https://www.primericaonline.com/pfsca/AscensusSSOServlet" target="_blank">529 Plan</a></li>
+      <li><a href="https://www.primericaonline.com/pfsca/views/polDolCommonAccess.jsp?appName=paperApp" target="_blank">IRA Assembler</a></li>
+      <li style="margin-bottom:0.2em;"><a href="https://www.primericaonline.com/pfsca/DonnelleySSOServlet" target="_blank">E-Doc Delivery</a></li>
+  
+      <span class="quicklink_lists"><a href="/apps/test/fe/pol/content/v1/#/on-demand/view/marketing-brochures-presentations" target="_blank">Marketing Materials</a><br></span>
+      <span class="quicklink_lists"><a href="https://test.primericaonline.com/pfsca/DonnelleySSOServlet" target="_blank">eForms (Servicing Accounts)</a><br></span>
+      <span class="quicklink_lists"><a id="moveContact" data-toggle="collapse" href="#contactInfo" aria-expanded="false" aria-controls="contactInfo home_office">Home Office Contacts</a><br></span>
+      <span class="quicklink_lists"><a href="contact_info_inv.html" target="_blank">Strategic Partner Contacts</a></span>
+    </div>
+  </div>
+
+
+  <div class="row mx-3">
+    <!-- Latest News -->
+	<div class="col-12 p-0 mb-1"><a data-toggle="collapse" data-target="#referenceCharts" class="collapsed p-3 btn-block text-uppercase text-white grey"><strong>Latest News</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+    <div id="referenceCharts" class="collapse col-12 p-0 mt-3" style="padding-left:15px!important;;">
+      <h4 class="text-capitalize">Marketing News</h4><br>
+      <h4 class="text-capitalize">Field Bulletins</h4><br>
+      <h4 class="text-capitalize">Securities Ops Newsletter</h4>
+      <h4 class="text-capitalize">Q2 2023 Newsletter</h4>
+      <!-- Newsletter -->
+      <article>
+        <img src="/general/graphics/am_01-04-23_mission.png" alt="Mission Driven in 2023" class="owl-img" style="max-width:45%!important;"/>
+        <div class="owl-story" style="max-width:54%!important;">
+          <h5>
+            <strong>Newly Updated! Check Out PFSI's Initiatives for 2023!</strong>
+          </h5>
+          <p>When it comes to “Invest the Difference,” Primerica Representatives are mission-driven to offer the best place to grow your investments business now and into the future.</p>
+          <br/>
+          <button class="article_btn" onclick="window.open('/general/pages/61696_Securities-Announcement.pdf')"><strong>Read Announcement (US)</strong></button>
+          <button class="article_btn" onclick="window.open('/general/pages/61735_Securities-Announcement.pdf')"><strong>Announcement (CAN)</strong></button>
+        </div>
+      </article>    
+    </div>
+
+    <!-- Get Licensed -->
+    <div class="col-12 p-0 mb-1"><a class="p-3 btn-block text-uppercase text-white slate" href="/licensing/licensing_securities.html" target="_blank"><strong>Get Licensed</strong></a></div>
+
+    <!-- Training -->
+    <div class="col-12 p-0 mb-1"><a data-toggle="collapse" data-target="#training-sec" class="collapsed p-3 btn-block text-uppercase text-white dk-grey"><strong>Training</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+    <div id="training-sec" class="collapse col-12 p-0 mt-3">
+      <div class="row">
+        <!-- Should add each href address -->
+        <div class="col-md-4 mb-3 "><a href="/apps/test/fe/pol/content/v1/#/on-demand/td_videos/blt26008829bbcfa4d7" target="_blank" class="d-inline-block py-5 px-4 text-center text-white dk-grey"><strong class="align-middle">PFSI Training Center</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="https://calendar.google.com/calendar/u/0/embed?src=us_securitiesmktg@corp.primerica.com&ctz=America/New_York" target="_blank" class="d-inline-block py-5 px-4 text-center text-white dk-grey"><strong class="align-middle">PFSI Calendar</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/pfsi_reg_bi_info_center.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white dk-grey"><strong class="align-middle">DOL/Reg BI Information Center</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/pfsi_annuity_reg_bi_info_center.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white dk-grey"><strong class="align-middle">NAIC Annuity Reg BI Resource Center</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/apps/test/fe/pol/content/v1/#/on-demand/td_videos/blt26008829bbcfa4d7" target="_blank" class="d-inline-block py-5 px-4 text-center text-white dk-grey"><strong class="align-middle">Step by Step Guides</strong></a></div>
+      </div>
+    </div>
+
+    <!-- Sales Tools -->
+    <div class="col-12 p-0 mb-1"><a data-toggle="collapse" data-target="#sales_tools" class="collapsed p-3 btn-block text-uppercase text-white grey"><strong>Sales Tools</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+    <div id="sales_tools" class="collapse col-12 p-0 mt-3">
+      <div class="row">
+        <!-- Should add each href address -->
+        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Flogin.primericaonline.com/home/primericaonline_refinitiv_1/0oa5oz2v2q9xrhHJt697/aln5oz5xdoB80mpm3697" target="_blank" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">InvestmentView Plus by Refinitiv</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/general/pages/external_site_warning.html?url=/pfsca/MorningstarAuthentication?redirectLink=2" target="_blank" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Morningstar Hypothetical Illustrator</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/general/pages/external_site_warning.html?url=/pfsca/MorningstarAuthentication?redirectLink=11" target="_blank" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Morningstar Portfolio Solutions</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="javascript:launchCDN('us')" onclick="boldLink(this,2)" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Client Data Now</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/apps/test/fe/pol/content/v1/#/on-demand/td_videos/blt7e21626ea098b516" target="_blank" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Training</strong></a></div>
+      </div>
+    </div>
+    <!-- Open New Account -->
+    <div class="col-12 p-0 mb-1"><a data-toggle="collapse" data-target="#open_newacct" class="collapsed p-3 btn-block text-uppercase text-white moss"><strong>Open a New Account</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+    <div id="open_newacct" class="collapse col-12 p-0 mt-3">
+      <div class="row">
+        <div class="col-md-4 mb-3 "><a href="/pfsca/DonnelleySSOServlet" target="_blank" class="d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">Send Prospectuses (E-Doc Delivery)</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/isp/index.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">Mutual Funds (EZ Key)</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="javascript:launchSAM()" onclick="boldLink(this,2)" class="d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">Mutual Funds (Shareholder Account Manager)</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="javascript:callFireLight()" onclick="boldLink(this,2)" class="d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">Annuities (AnnuityPro)</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/pfsca/PershingSSOServlet" target="_blank" class="d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">Managed Accounts (Lifetime Investment Program)</strong></a></div>
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#ira_assembler" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">IRA Assembler</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <!--sub menu for IRA assembler -->
+          <div id="ira_assembler" class="collapse col-12 p-0">
+            <div class="sub_items ">
+              <div class="col-md-4 mb-3 "><a href="/pfsca/views/polDolCommonAccess.jsp?appName=paperApp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">IRA Assembler (Paper Apps Tools)</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/prweb/PRAuth/app/DOL/AgentSSO?" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">IRA Assembler Worklist</strong></a></div>
+            </div>
+          </div>
+        <div class="col-md-4 mb-3 "><a href="/pfsca/AscensusSSOServlet" target="_blank" class="d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle"> 529 Plans</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/asset_securities_apps_list.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">Paper Applications</strong></a></div>
+        <!--sub menu for support -->
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#support_menu" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">Support</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+          <div id="support_menu" class="collapse col-12 p-0">
+            <div class="sub_items ">
+              <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">529 Plans</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">AnnuityPro</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">EZ Key</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Lifetime Investment Program</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Shareholder Account Manager</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">IRA Assembler</strong></a></div>
+            </div>
+          </div>
+        <div class="col-md-4 mb-3 "><a href="/prweb/PRAuth/app/QOB/AgentSSO" target="_blank" class="d-inline-block py-5 px-4 text-center text-white moss"><strong class="align-middle">Securities QOB Tracker</strong></a></div>
+      </div>
+    </div>
+
+    <!-- PSS Operations Support -->
+    <div class="col-12 p-0 mb-1"><a data-toggle="collapse" data-target="#pss_support" class="collapsed p-3 btn-block text-uppercase text-white lt-moss"><strong>PSS Operations Support</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+    <div id="pss_support" class="collapse col-12 p-0 mt-3">
+      <div class="row">
+        <!-- Should add each href address -->
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/securities_forms.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Forms (Service Business)</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/securities_guides.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Guides & checklists</strong></a></div>
+        <!--sub menu for Purchase Requirements -->
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#purchase_requirements" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Purchase Requirements</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <div id="purchase_requirements" class="collapse col-12 p-0">
+          <div class="sub_items ">
+            <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Investment Minimums</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Allowable Purchase Methods</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/retirement_plan_contribution_limits.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Retirement Plan Contribution Limits</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Morningstar Model Portfolios</strong></a></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#approved_funds" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Approved Fund Listings</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <!--sub menu for approved funds -->
+          <div id="approved_funds" class="collapse col-12 p-0">
+            <div class="sub_items ">
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#mutual_funds" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Mutual Funds</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+              <!--sub-sub menu for mutual funds -->
+                <div id="mutual_funds" class="collapse col-12 p-0">
+                  <div class="sub_items">
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/sb70.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">SB-70 Mutual Fund Approved Funds</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/sb72.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">SB-72 Mutual Fund Suitability Guide</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/Share_Class_Analysis_FundFamily_Table.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Share Class Fund Family Table</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/suitability_guide_training_doc.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Suitability Training Document</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/approved_funds_quarterly_analytics.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Approved Funds Quarterly Analysis</strong></a></div>
+                    <!-- @@@ Need to link -->
+                    <div class="col-md-4 mb-3 "><a href="/licensing/licensing_quick-reference-chart_us.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">ESG & Socially Conscious Fund List</strong></a></div>
+                  </div>
+                </div>
+  
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#annuities" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Annuities</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+              <!--sub-sub menu for annuities funds -->
+                <div id="annuities" class="collapse col-12 p-0">
+                  <div class="sub_items">
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/sb71.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">SB-71 Variable Annuities Approved Funds</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/sb73.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">SB-73 Variable Annuity Approved Fund Suitability Guide</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/sb75.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">SB-75 Variable Annuities Approved Fund List - Equitable</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/sb77.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">SB-77 Variable Annuities Approved Fund Suitability Guide - Equitable</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/suitability_guide_training_doc.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Suitability Guide Training Document</strong></a></div>
+                  </div>
+                </div>
+              <div class="col-md-4 mb-3 "><a href="/pfsca/views/autorightanswers.jsp" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">EZ Key</strong></a></div>
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#plans529" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">529 Plans</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+              <!--sub-sub menu for annuities funds -->
+                <div id="plans529" class="collapse col-12 p-0">
+                  <div class="sub_items">
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/sb74.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">SB-74 529 Education Approved Funds List</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/SB529_Suit_Guide_07.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">SB-529 Suitability Guide</strong></a></div>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#sm_retirement" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Small Business Retirement Plans</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <!--sub menu for Small Business Retirement Plans -->
+        <div id="sm_retirement" class="collapse col-12 p-0">
+          <div class="sub_items ">
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/employer_plans_roadmap.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Guide to setting up PSS Accounts</strong></a></div>
+            <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#econtributions" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">eContributions</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+              <!--sub-sub menu for eContributions -->
+                <div id="econtributions" class="collapse col-12 p-0">
+                  <div class="sub_items">
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/econtributions_um.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">eContributions User Manual</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/public/forms/pdf/POL-30.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">eContributions Service Employer Application</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fecontrib.bnymellon.com/econtrib/" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">eContributions Website</strong></a></div>
+                  </div>
+                </div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/pfsi_retirement_plan_options.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">PFSI Retirement Plan Options Table</strong></a></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/transfer_of_assets.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Transfer of Assets Requirements</strong></a></div>
+      </div>
+    </div>
+
+    <!-- Marketing Support & Resources -->
+    <div class="col-12 p-0 mb-1"><a data-toggle="collapse" data-target="#marketing_support" class="collapsed p-3 btn-block text-uppercase text-white teal"><strong>Marketing Support & Resources</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+    <div id="marketing_support" class="collapse col-12 p-0 mt-3">
+      <div class="row">
+        <!-- Should add each href address -->
+        <div class="col-md-4 mb-3 "><a href="contact_info_inv.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Strategic Partners & Home Office Contact List</strong></a></div>
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#plan_providers_529" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">529 Plan Providers</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <!--sub menu for 529 Plan Providers -->
+          <div id="plan_providers_529" class="collapse col-12 p-0">
+            <div class="sub_items ">
+              <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.capitalgroup.com/individual/what-we-offer/college-america-529.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">American Funds</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=http:%2F%2Fadvisor.fidelity.com/529" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Fidelity Advisors</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=http:%2F%2Fwww.franklintempleton.com/planning-and-learning/planning-for/education#boost-your-college-savings" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Franklin Templeton</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.invesco.com/college-bound-529-plan/" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Invesco</strong></a></div>
+              <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=http:%2F%2Fwww.scholars-choice.com" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">nuveen</strong></a></div>
+            </div>
+          </div>
+        <div class="col-md-4 mb-3 "><a href="/apps/test/fe/pol/content/v1/#/on-demand/view/marketing-brochures-presentations" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Brochures & Presentations</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/financial_resource_library.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Financial Resource Library</strong></a></div>
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#retirement_rsc" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Retirement Plans Resources</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <!--sub menu for Retirement Plans Resources -->
+          <div id="retirement_rsc" class="collapse col-12 p-0">
+            <div class="sub_items ">
+              <!--sub-sub menu for IRA Resources -->
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#econtributions" class="sub_sub_menu_toggle2 d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">IRA Resources</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                <div id="econtributions" class="collapse col-12 p-0">
+                  <div class="sub_items">
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/ira_savings_email.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">IRA Contribution Email</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/retirement_plan_contribution_limits.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">2023 Retirement Plan Contribution Limits</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/apps/test/fe/pol/content/v1/#/on-demand/view/marketing-brochures-presentations" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">News You Can Use</strong></a></div>
+                  </div>
+                </div>
+              <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/pfsi_retirement_plan_options.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">PFSI Retirement Plan Options Table</strong></a></div>
+              <!--sub-sub menu for Small Business Retirement -->
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#sm_business_tr" class="sub_sub_menu_toggle2 d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Small Business Retirement Plans</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                <div id="sm_business_tr" class="collapse col-12 p-0">
+                  <div class="sub_items">
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/small_business_retirement_plan_chooser.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Small Business Selection Tool</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Getting Started with PSS</strong></a></div>
+                    <!--sub-sub-sub menu for State Specific Plans -->
+                    <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#state_plans" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">State Specific Plans</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                    <div id="state_plans" class="collapse col-12 p-0">
+                      <div class="sub_items">
+                        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/brp_state_sponsored_plan_table.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">State Sponsored Plans Table</strong></a></div>
+                        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/brp_calsavers.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">California CalSavers</strong></a></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- sub-sub menu for 401(k) Plans -->
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#plans_401k" class="sub_sub_menu_toggle2 d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">401(k) Plans</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                <div id="plans_401k" class="collapse col-12 p-0">
+                  <div class="sub_items">
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/brp_401k_plan_providers.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">401(k) Plan Provider Comparison Chart</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/home/downloadcenter/pages/dc_bottomset.html#/media/299842" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">401(k) Reference Guide</strong></a></div>
+                    <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.capitalgroup.com/advisor" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">American Funds</strong></a></div>
+                      <!--sub-sub-sub menu for Cuna Mutual -->
+                      <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#cuna_mutual" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Cuna Mutual</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                      <div id="cuna_mutual" class="collapse col-12 p-0">
+                        <div class="sub_items">
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Plan Checklist for CUNA Mutual 401(k) & ERISA 403(b)</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">CUNA Advisor Site</strong></a></div>
+                        </div>
+                      </div>
+                      <!--sub-sub-sub menu for Equitable -->
+                      <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#equitable" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Equitable</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                      <div id="equitable" class="collapse col-12 p-0">
+                        <div class="sub_items">
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Workflow for Equitable Retirement Gateway 401(k) & 457(b) Products</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Plan Checklist for Equitable 401(k), ERISA 403(b) and 457(b)</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Equitable Advisor Site</strong></a></div>
+                        </div>
+                      </div>
+                      <!--sub-sub-sub menu for Fidelity Advisors -->
+                      <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#fidelity" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Fidelity Advisors</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                      <div id="fidelity" class="collapse col-12 p-0">
+                        <div class="sub_items">
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Plan Sponsor Attitudes</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Plan Checklist for FA 401(k)</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Fidelity Advisors Advisor Site</strong></a></div>
+                        </div>
+                      </div>      
+                      <!--sub-sub-sub menu for JULY Services -->
+                      <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#july_services" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">JULY Services</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                      <div id="july_services" class="collapse col-12 p-0">
+                        <div class="sub_items">
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Workflow for JULY Services</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Plan Checklist</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">401(k) Retirement Plan for S6</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Advisor Site</strong></a></div>
+                        </div>
+                      </div>                       
+                      <!--sub-sub-sub menu for Voya -->
+                      <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#voya" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Voya</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                      <div id="voya" class="collapse col-12 p-0">
+                        <div class="sub_items">
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Workflow for Voya</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Plan Checklist for Voya MAP</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Plan Checklist for Voya Framework</strong></a></div>
+                          <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Advisor Site</strong></a></div>
+                        </div>
+                      </div>   
+                    <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/brp_PR_retirement_plans_ref_guide.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Puerto Rico Retirement Plans Reference Guide</strong></a></div>
+                  </div>
+                </div>
+              <!-- sub_sub mune for Individual(k) Plans -->
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#individual_plans" class="sub_sub_menu_toggle2 d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Individual(k) Plans</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+              <div id="individual_plans" class="collapse col-12 p-0">
+                <div class="sub_items">
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Invesco Solo(K)</strong></a></div>
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Franklin Templeton Solo(K)</strong></a></div>
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">JULY Solo(K)</strong></a></div>
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Individual 401(k) Plan Disclosure Form</strong></a></div>
+                </div>
+              </div>
+              <!-- sub_sub mune for 403(b) and 457(b) Plans -->
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#fourzerothree" class="sub_sub_menu_toggle2 d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">403(b) and 457(b) Plans</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+              <div id="fourzerothree" class="collapse col-12 p-0">
+                <div class="sub_items">
+                    <!-- sub sub sub mune for 403(b) Platform Providers -->
+                    <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#platform_providers_403" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">403(b) Platform Providers</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                    <div id="platform_providers_403" class="collapse col-12 p-0">
+                      <div class="sub_items">
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fipro.americancentury.com/en.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">American Century Investments</strong></a></div>
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.institutional.fidelity.com" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Fidelity Advisor Funds</strong></a></div>
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.franklintempleton.com" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Franklin Templeton</strong></a></div>
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.invesco.com/us/login%3FaudienceType=Advisor" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Invesco</strong></a></div>
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.nuveen.com" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">nuveen</strong></a></div>
+                      </div>
+                    </div>   
+                    <!-- sub sub sub mune for 403(b) Off-Platform Providers -->
+                    <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#off_providers_403" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">403(b) Off-Platform Providers</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                    <div id="off_providers_403" class="collapse col-12 p-0">
+                      <div class="sub_items">
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.capitalgroup.com/advisor" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Capital Group | American Funds</strong></a></div>
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.equitable.com/primerica" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">AXA Equitable 403(b) VA Products</strong></a></div>
+                      </div>
+                    </div>   
+
+                    <div class="col-md-4 mb-3 "><a href="/home/downloadcenter/pages/dc_bottomset.html#/media/304115" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">403(b) Reference Guide</strong></a></div>
+            
+                    <!-- sub sub sub mune for 457(b) Plan Providers -->
+                    <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#providers_457" class="sub_sub_menu_toggle d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">457(b) Plan Providers</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+                    <div id="providers_457" class="collapse col-12 p-0">
+                      <div class="sub_items">
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.equitable.com/primerica" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Equitable</strong></a></div>
+                        <div class="col-md-4 mb-3 "><a href="/general/pages/third_party_site_disclaimer.html?url=https:%2F%2Fwww.aspireonline.com/primerica/" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Aspire</strong></a></div>
+                      </div>
+                    </div>   
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Compliance Notices</strong></a></div>
+                </div>
+              </div>
+
+              <!-- sub_sub mune for Secure Act 2.0 -->
+              <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#secure_act_2" class="sub_sub_menu_toggle2 d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Secure Act 2.0</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+              <div id="secure_act_2" class="collapse col-12 p-0">
+                <div class="sub_items">
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Secure Act 2.0 Summary Field Bulletin</strong></a></div>
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">PenServ Secure 2.0 Webinar</strong></a></div>
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">News You can Use</strong></a></div>
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">PenServ - IRA Plus Newsletter: Secure</strong></a></div>
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Ascensus Secure 2.0 Act's Key Provisions</strong></a></div>
+                  <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white lt-moss"><strong class="align-middle">Ascensus Secure 2.0 News</strong></a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="col-md-4 mb-3 "><a href="/licensing/licensing_quick-reference-chart_us.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white teal"><strong class="align-middle">Seminar Center</strong></a></div>
+      </div>
+    </div>
+
+    <!-- Perfect Path to Annuities -->
+    <div class="col-12 p-0 mb-1"><a class="p-3 btn-block text-uppercase text-white lt-moss" href="/licensing/licensing_perfect-path-annuities.html" target="_blank"><strong>Perfect Path to Annuities</strong></a></div>
+
+    <!-- Lifetime Investment Program -->
+    <div class="col-12 p-0 mb-1"><a class="p-3 btn-block text-uppercase text-white slate" href="/product_support/asset/pages/lifetime-investment-program.html" target="_blank"><strong>Lifetime Investment Program</strong></a></div>
+
+    <!-- Commissions -->
+    <div class="col-12 p-0 mb-1"><a data-toggle="collapse" data-target="#commissions" class="collapsed p-3 btn-block text-uppercase text-white grey"><strong>Commissions</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+    <div id="commissions" class="collapse col-12 p-0 mt-3">
+      <div class="row">
+        <!-- Should add each href address -->
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/securitiesCommissions.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Commission Schedule</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="javascript:loadInvestmentEarnedCommissionStatementInquiry()" onclick="boldLink(this,2)" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Commission Statements</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/home/compensation/pages/osj_compensation_program.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">OSJ Compensation Program</strong></a></div>
+        <!--sub menu for Investments Production Bonus -->
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#investments_bonus" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Investments Production Bonus</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <div id="investments_bonus" class="collapse col-12 p-0">
+          <div class="sub_items">
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/RVP-Securities-Production-Bonus-US.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">U.S. RVP Securities Bonus</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/At-First-RVP-Securities-Bonus-Program-US.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">U.S. At First RVP Securities Production Bonus</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/locating_bonuses_on_your_earnings_statements.pdf" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Locating Bonuses on Your Earning Statement</strong></a></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/excel_for_equity_standings.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Excel for Equity Standings</strong></a></div>
+        <!--sub menu for Securities Commissions Dream Calculators -->
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#dream_calculators" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Securities Commissions Dream Calculators</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <div id="dream_calculators" class="collapse col-12 p-0">
+          <div class="sub_items">
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/sec_commissions_calc_disclaimer.html?country=usa" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Mutual Fund & Annuity</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/fixed_index_annuity_calc_disclaimer.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Fixed Indexed Annuity</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/LIP_dream_calculator.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Managed Accounts</strong></a></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3 "><a href="/apps/test/fe/pol/content/v1/#/on-demand/td_videos/blt790e64ea8cb87f08" target="_blank" class="d-inline-block py-5 px-4 text-center text-white grey"><strong class="align-middle">Training</strong></a></div>  
+      </div>
+    </div>
+
+    <!-- Help & Contact Info -->
+    <div class="col-12 p-0 mb-1"><a data-toggle="collapse" data-target="#contactInfo" class="collapsed p-3 btn-block text-uppercase text-white slate"><strong>Help & Contact Info</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+    <div id="contactInfo" class="collapse col-12 p-0 mt-3">
+      <div class="row">
+        <!-- Should add each href address -->
+        <div class="col-md-4 mb-3 "><a href="contact_info_inv.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white slate"><strong class="align-middle">Strategic Partners</strong></a></div>
+        <!--sub menu for Securities Commissions Dream Calculators -->
+        <div class="col-md-4 mb-3 "><a data-toggle="collapse" data-target="#home_office" class="sub_menu_toggle d-inline-block py-5 px-4 text-center text-white slate"><strong class="align-middle">Home Office Contacts</strong><i class="float-right fas fa-chevron-right"></i></a></div>
+        <div id="home_office" class="collapse col-12 p-0">
+          <div class="sub_items">
+            <div class="col-md-4 mb-3 "><a href="contact_info_inv.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">PFSI Home Office Contacts</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/golden_cir.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Franklin Templeton Golden Circle</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/chairmans_council.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Invesco Chairman's Council</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/managed_investment_consulting_team.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Managed Accounts Consulting Team</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="/product_support/asset/pages/managed_accts_concierge_desk.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Managed Accounts Concierge Desk</strong></a></div>
+            <div class="col-md-4 mb-3 "><a href="#" target="_blank" class="d-inline-block py-5 px-4 text-center text-white sl-grey"><strong class="align-middle">Diamond Desk</strong></a></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3 "><a href="/licensing/licensing_quick-reference-chart_us.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white slate"><strong class="align-middle">Compliance</strong></a></div>
+        <div class="col-md-4 mb-3 "><a href="/licensing/licensing_quick-reference-chart_cn.html" target="_blank" class="d-inline-block py-5 px-4 text-center text-white slate"><strong class="align-middle">Help</strong></a></div>
+      </div>
+    </div>
+</main>
+
+
+<footer class="small"></footer>
+<script integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/general/style_sheets/assets/bootstrap-4.6.0-dist/js/bootstrap.min.js"></script>
+<script src="/general/src/owl.carousel.min.js"></script>
+<script src="/licensing/getting_licensed/src/dina_frameset.js"></script>
+<script src="/general/src/elogic.js"></script>
+<script src="/general/src/openwebpage.js"></script>
+<script src="/general/src/pfs_footer.js"></script>
+<script src="/general/src/url.js"></script>
+<script src="/ca/appletwindow.js"></script>
+<script>
+	$(document).ready(function() {
+	$(".slider").owlCarousel({
+		singleItem: true,
+		itemsScaleUp: true,
+		autoPlay: true,
+		stopOnHover: true,
+		items: 1
+	});
+  }); 
+  $("#moveContact").click(function() {
+    $('html, body').animate({
+      scrollTop: $('footer').offset().top
+    }, 'slow');
+  });
+</script>
+<script type="text/javascript">
+function goToWebsite(website)
+{
+ function url_encode(URL){return URL.replace(/\/\//g,'%2F%2F').replace(/\?/g,'%3F')} // Encode all "//" and "?"
+
+ var w, show_disclaimer = true;
+
+ if (!website || (typeof(website) != "string") || (website.length < 3)) return;
+
+ switch(website)
+ {
+  case "cipr": {website = "https://www.cipr.ca"; break}
+  case "pearsonvue": {website = "https://home.pearsonvue.com"; break}
+  case "prometric" : {website = "https://www.prometric.com"; break}
+  case "psiexams"  : {website = "https://candidate.psiexams.com"; break}
+  case "home.psiexams": {website = "https://home.psiexams.com/#/home"; break}
+
+  case "SeeWhy":
+  {
+	if (SeeWhyCheck()) website = "/pfsca/SeeWhyLearnServlet";
+	else return;
+	break;
+  }
+
+  default: {}
+ }
+
+ if (show_disclaimer) website = "/general/pages/third_party_site_disclaimer.html?url=" + url_encode(website);
+ w = window.open(website, "_blank");
+ if (!!w) w.focus();
+}
+
+
+////////////////
+function goToPriLMS(website)
+{
+ function url_encode(URL){return URL.replace(/\/\//g,'%2F%2F').replace(/\?/g,'%3F')} // Encode all "//" and "?"
+ var w;
+	if (!website || (typeof(website) != "string") || (website.length < 3)) {
+		return;
+	}
+ w = window.open(website, "_blank");
+ if (!!w) w.focus();
+}
+////////////////
+
+
+draw_PFS_standard_footer("FirstCopyrighted=2022", "100%");
+
+</script>
+<!-- SDMR 23358: used by gotoFireLight() above -->
+<form id="firelightForm" method="POST" action="/pfsca/views/polDolCommonAccess.jsp" target="Firelight">
+  <input type="hidden" name="id" value="">
+  <input type="hidden" name="type" value="">
+  <input type="hidden" name="appName" value="fireLight">
+</form>
+</body>
+</html>
